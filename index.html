@@ -1,0 +1,630 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>马俊 · 个人简历</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #fafbfc;
+  --surface: #ffffff;
+  --fg:      #1a1a2e;
+  --muted:   #6b7280;
+  --border:  #e5e7eb;
+  --accent:  #2563eb;
+  --accent-light: #dbeafe;
+  --accent-subtle: #eff6ff;
+  --radius: 12px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.10);
+  --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- Nav ---- */
+.nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(12px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1100px; margin: 0 auto; padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between; height: 56px;
+}
+.nav-brand {
+  font-size: 18px; font-weight: 700; letter-spacing: -0.01em;
+}
+.nav-links {
+  display: flex; gap: 28px; list-style: none;
+}
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 500;
+  transition: color var(--transition);
+}
+.nav-links a:hover { color: var(--fg); }
+.nav-links a.active { color: var(--accent); }
+
+/* ---- Container ---- */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+/* ---- Hero ---- */
+.hero {
+  padding: 48px 0 36px;
+}
+.hero-inner {
+  display: flex; align-items: center; gap: 48px;
+}
+.hero-text { flex: 1; }
+.hero-badge {
+  display: inline-block; padding: 4px 14px; background: var(--accent-subtle);
+  color: var(--accent); border-radius: 20px; font-size: 13px; font-weight: 600;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15;
+  margin-bottom: 12px;
+}
+.hero h1 span { color: var(--accent); }
+.hero-subtitle {
+  font-size: 18px; color: var(--muted); margin-bottom: 24px; line-height: 1.6;
+}
+.hero-contact {
+  display: flex; flex-wrap: wrap; gap: 20px; font-size: 14px; color: var(--muted);
+  margin-bottom: 20px;
+}
+.hero-contact span {
+  display: flex; align-items: center; gap: 6px;
+}
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-avatar {
+  width: 140px; height: 180px; border-radius: 16px; object-fit: cover;
+  background: #e5e7eb; flex-shrink: 0; box-shadow: var(--shadow-lg);
+}
+
+/* ---- Button ---- */
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px; background: var(--accent); color: #fff;
+  border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;
+  transition: opacity var(--transition); cursor: pointer; border: none; font-family: inherit;
+}
+.btn-primary:hover { opacity: 0.88; }
+
+/* ---- Section ---- */
+.section { padding: 40px 0; }
+.section-label {
+  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--accent); margin-bottom: 6px;
+}
+.section-title {
+  font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 24px;
+}
+
+/* ---- About Me ---- */
+.about-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px; max-width: 780px;
+  display: flex; gap: 20px; align-items: flex-start;
+}
+.about-quote {
+  font-size: 48px; line-height: 1; color: var(--accent-light); flex-shrink: 0;
+  font-family: Georgia, serif; margin-top: -4px;
+}
+.about-body { font-size: 15px; line-height: 1.9; color: #374151; }
+.about-body strong { color: var(--fg); }
+
+/* ---- Project Cards ---- */
+.project-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(460px, 1fr)); gap: 24px;
+}
+.project-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 32px;
+  transition: box-shadow var(--transition), transform var(--transition);
+  cursor: default;
+}
+.project-card:hover {
+  box-shadow: var(--shadow-lg); transform: translateY(-2px);
+}
+.project-card-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 16px;
+}
+.project-icon {
+  width: 44px; height: 44px; border-radius: 12px; display: flex;
+  align-items: center; justify-content: center; font-size: 22px;
+}
+.project-icon.hot { background: #fef2f2; }
+.project-icon.research { background: #eff6ff; }
+.project-card h3 {
+  font-size: 20px; font-weight: 700; letter-spacing: -0.01em;
+}
+.project-meta {
+  font-size: 13px; color: var(--muted); margin-top: 2px;
+}
+.project-meta .dot { margin: 0 6px; }
+.project-highlights {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;
+}
+.project-highlight {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: #059669; background: #ecfdf5;
+  padding: 2px 10px; border-radius: 6px; font-weight: 500;
+}
+.project-desc {
+  font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 20px;
+}
+.project-tech {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 20px;
+}
+.project-tech span {
+  padding: 3px 10px; font-size: 12px; font-weight: 500;
+  background: #f3f4f6; border-radius: 6px; color: #374151;
+}
+.project-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 20px; background: var(--fg); color: #fff;
+  border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;
+  transition: opacity var(--transition);
+}
+.project-link:hover { opacity: 0.85; }
+.project-link-outline {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 20px; background: transparent; color: var(--fg);
+  border: 1.5px solid var(--border); border-radius: 8px;
+  text-decoration: none; font-size: 14px; font-weight: 600;
+  margin-left: 10px;
+  transition: border-color var(--transition), background var(--transition);
+}
+.project-link-outline:hover { border-color: var(--fg); background: #f9fafb; }
+
+/* ---- Project Summary Block (外置摘要) ---- */
+.project-summary-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 28px;
+  margin-bottom: 20px;
+  transition: box-shadow var(--transition);
+}
+.project-summary-block:hover { box-shadow: var(--shadow-md); }
+.project-summary-header {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+}
+.project-summary-header h3 {
+  font-size: 20px; font-weight: 700; letter-spacing: -0.01em;
+}
+.project-summary-desc {
+  font-size: 14px; color: var(--muted); line-height: 1.75;
+  margin-bottom: 16px;
+}
+.project-summary-footer {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
+}
+.project-summary-links { display: flex; gap: 10px; margin-left: auto; }
+
+/* ---- Internship ---- */
+.internship-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px; max-width: 740px;
+}
+.internship-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
+}
+.internship-header h3 { font-size: 20px; font-weight: 700; }
+.internship-date {
+  font-size: 13px; color: var(--muted); white-space: nowrap;
+  background: #f9fafb; padding: 4px 12px; border-radius: 6px;
+}
+.internship-role { font-size: 15px; color: var(--accent); font-weight: 600; margin-bottom: 16px; }
+.internship-list { padding-left: 20px; }
+.internship-list li {
+  font-size: 14px; color: var(--muted); line-height: 1.7; margin-bottom: 8px;
+}
+
+/* ---- Skills ---- */
+.skills-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;
+}
+.skill-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 24px;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+.skill-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.skill-card h4 {
+  font-size: 14px; font-weight: 700; margin-bottom: 12px; letter-spacing: -0.01em;
+}
+.skill-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.skill-tags span {
+  padding: 4px 10px; font-size: 12px; font-weight: 500;
+  background: var(--accent-subtle); color: var(--accent); border-radius: 6px;
+}
+
+/* ---- Cert Card ---- */
+.skill-card-cert { text-align: center; }
+.cert-img {
+  width: 100%; max-width: 280px; border-radius: 8px;
+  border: 1px solid var(--border); margin-bottom: 10px;
+  display: block; margin-left: auto; margin-right: auto;
+}
+.cert-label {
+  font-size: 13px; font-weight: 700; color: var(--fg);
+}
+.cert-sub {
+  font-size: 11px; color: var(--muted); margin-top: 2px;
+}
+
+/* ---- Education ---- */
+.edu-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 32px; max-width: 740px;
+  display: flex; gap: 24px; align-items: flex-start;
+}
+.edu-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  background: var(--accent-subtle); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; flex-shrink: 0;
+}
+.edu-body h3 { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+.edu-major { font-size: 14px; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
+.edu-period { font-size: 13px; color: var(--muted); }
+
+/* ---- Language ---- */
+.lang-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+.lang-tag {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 8px;
+  background: #f0fdf4; border: 1px solid #bbf7d0;
+  font-size: 13px; font-weight: 500; color: #166534;
+}
+.lang-tag .level { font-size: 11px; color: #6b7280; }
+
+/* ---- Cert ---- */
+.cert-row {
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.cert-card {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 20px;
+  transition: box-shadow var(--transition);
+}
+.cert-card:hover { box-shadow: var(--shadow-md); }
+.cert-badge {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: #fefce8; color: #ca8a04;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.cert-info h4 { font-size: 14px; font-weight: 700; }
+.cert-info p { font-size: 12px; color: var(--muted); }
+
+/* ---- Back to Top ---- */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px; z-index: 90;
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--fg); color: #fff; border: none;
+  cursor: pointer; font-size: 20px; display: flex;
+  align-items: center; justify-content: center;
+  box-shadow: var(--shadow-lg);
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none;
+}
+.back-to-top.visible {
+  opacity: 1; transform: translateY(0); pointer-events: auto;
+}
+.back-to-top:hover { opacity: 0.85; }
+
+/* ---- Scroll Reveal ---- */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ---- Footer ---- */
+.footer {
+  border-top: 1px solid var(--border); padding: 32px 0;
+  text-align: center; color: var(--muted); font-size: 13px;
+}
+.footer-links {
+  display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+  margin-top: 8px;
+}
+.footer-links a {
+  color: var(--muted); text-decoration: none; transition: color var(--transition);
+}
+.footer-links a:hover { color: var(--fg); }
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .hero-inner { flex-direction: column-reverse; text-align: center; }
+  .hero-contact { justify-content: center; }
+  .hero-actions { justify-content: center; }
+  .hero h1 { font-size: 36px; }
+  .hero-avatar { width: 100px; height: 130px; }
+  .project-grid { grid-template-columns: 1fr; }
+  .project-link-outline { margin-left: 0; margin-top: 10px; }
+  .nav-links { gap: 16px; }
+  .about-card { flex-direction: column; text-align: center; }
+}
+@media (max-width: 480px) {
+  .hero h1 { font-size: 28px; }
+  .section-title { font-size: 24px; }
+  .nav-inner { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand">马俊</div>
+    <ul class="nav-links">
+      <li><a href="#about">关于我</a></li>
+      <li><a href="#projects">项目经历</a></li>
+      <li><a href="#internship">实习经历</a></li>
+      <li><a href="#skills">职业技能</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <div class="hero-badge">AI Agent · 全栈开发</div>
+      <h1>你好，我是<span>马俊</span></h1>
+      <p class="hero-subtitle">
+        广东东软学院网络工程专业在读，专注于 AI Agent 与全栈开发。<br>
+        擅长 Python / Vue 全栈项目构建，热爱将 AI 能力产品化落地。
+      </p>
+      <div class="hero-contact">
+        <span>📱 19122375639</span>
+        <span>✉ 743379974@qq.com</span>
+        <span>🔗 github.com/MaJun0517</span>
+      </div>
+      <div class="hero-actions">
+        <a class="btn-primary" href="#projects">查看项目 ↓</a>
+        <a class="project-link-outline" href="https://github.com/MaJun0517" target="_blank" style="margin-left:0;">GitHub 主页 ↗</a>
+      </div>
+    </div>
+    <img class="hero-avatar" src="MaJun.jpg" alt="个人照片" onerror="this.style.background='#dbeafe';this.style.display='flex';this.style.alignItems='center';this.style.justifyContent='center';this.style.fontSize='48px';this.textContent='👤'">
+  </div>
+</header>
+
+<section class="section reveal" id="about">
+  <div class="container">
+    <div class="section-label">关于我</div>
+    <h2 class="section-title">个人简介</h2>
+    <div class="about-card">
+      <div class="about-quote">"</div>
+      <div class="about-body">
+        我是<strong>马俊</strong>，一名专注于<strong>AI 应用落地</strong>的全栈开发者。目前就读于广东东软学院网络工程专业，课余时间全部投入在实际 AI 项目的构建与迭代中。<br><br>
+        <strong>AI 方向：</strong>熟练运用 <strong>LangChain 框架</strong>进行 LLM 应用编排，掌握 <strong>RAG 检索增强生成</strong>（Embedding + 向量检索 + 上下文注入）完整链路，了解 <strong>MCP 协议</strong>（Model Context Protocol）实现 AI Agent 与外部工具的标准化交互。具备 <strong>NLP 实战经验</strong>：jieba 中文分词、TF-IDF 关键词提取、词典情感分析（215 词情感词典从 146 词迭代扩展，覆盖体育/社会/安全等垂直领域）。<br><br>
+        <strong>工程能力：</strong>以 <strong>Python 生态</strong>（Django DRF / FastAPI）为后端基石，<strong>Vue 3</strong> 为前端表达，辅以 Docker 容器化部署与 GitHub Actions CI/CD。深度使用 <strong>Claude Code CLI</strong> 进行子进程编排与自动化内容生成（开发了 hot-push Skill、Company Research 双报告并行调度），积累了 <strong>AI Agent 编排、Prompt Engineering、子进程管理、SSE 实时流</strong>等实战经验。擅长从零构建完整闭环——从数据采集、AI 分析到飞书/Word 多端分发，在每个环节追求工程化的可靠性。
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="projects">
+  <div class="container">
+    <div class="section-label">项目经历</div>
+    <h2 class="section-title">精选项目</h2>
+
+    <!-- 项目一：摘要外置 -->
+    <div class="project-summary-block">
+      <div class="project-summary-header">
+        <div class="project-icon hot">📊</div>
+        <div>
+          <h3>每日热点聚合平台</h3>
+          <p class="project-meta">2026.06<span class="dot">·</span>独立开发<span class="dot">·</span>日均 50+ 用户</p>
+        </div>
+      </div>
+      <p class="project-summary-desc">
+        多平台热点聚合与智能分发系统。ThreadPoolExecutor 并发抓取抖音/微博/头条/小红书/央视/YouTube 六大平台热点（3~5 秒响应），采用<strong>多策略爬虫</strong>（JSON API + HTML 解析 + 搜索回退）处理异构数据源。全量刷新策略：先删除后导入杜绝旧数据残留；按 source_url 去重确保高频刷新不冗余。AI 分析流水线：jieba TF-IDF 提取关键词（120+ 停用词过滤）→ 215 词词典情感分类 → DeepSeek LLM 趋势摘要（可选启用，支持热插拔）。深度集成飞书生态：配置 lark-cli 工具链，开发 Claude Code Skill（hot-push / 自然语言触发），设置 Cron 每日早 8 点自动推送 Markdown 速报（含可点击链接和热度值），已稳定运行 2 个月，日均触达 50+ 用户。
+      </p>
+      <div class="project-summary-footer">
+        <div class="project-highlights">
+          <div class="project-highlight">⚡ 6 平台 3~5s 并发</div>
+          <div class="project-highlight">🧠 三级 AI 流水线</div>
+          <div class="project-highlight">📅 Cron 稳定推送 2 月</div>
+        </div>
+        <div class="project-tech">
+          <span>Python 3.13</span><span>Django 6.0</span><span>DRF</span><span>Vue 3</span>
+          <span>Vite</span><span>jieba</span><span>Docker</span><span>PostgreSQL</span>
+          <span>飞书 OpenAPI</span><span>lark-cli</span><span>Cron</span>
+        </div>
+        <div class="project-summary-links">
+          <a class="project-link" href="project-hot.html">查看界面复现 →</a>
+          <a class="project-link-outline" href="https://github.com/MaJun0517/hot-topics" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 项目二：摘要外置 -->
+    <div class="project-summary-block">
+      <div class="project-summary-header">
+        <div class="project-icon research">🏢</div>
+        <div>
+          <h3>Company Research</h3>
+          <p class="project-meta">2026.01<span class="dot">·</span>独立开发<span class="dot">·</span>3~8 分钟生成报告</p>
+        </div>
+      </div>
+      <p class="project-summary-desc">
+        企业调研报告自动生成系统。asyncio.gather 并行调度 Claude Code CLI 子进程，搭配<strong>文件系统快照策略</strong>（启动前后对比新增 .md 文件 → 优先读取文件系统产物 → stdout 兜底）智能捕获完整报告输出。并发生成公司概况与行业分析两份 Word 文档（微软雅黑 · A4 排版，支持标题/表格/代码块/列表/引用）。内置 8 项 Preflight 环境检测（CLI 安装、非交互模式、Python 版本、依赖、端口、网络、中文路径、磁盘） + Quick Setup 一键配置（预设 DeepSeek / Anthropic / 自定义端点） + SSE 实时进度流。支持优雅降级——一份报告失败另一份仍可下载。将传统 2~4 小时人工调研压缩至 3~8 分钟，报告覆盖公司基本信息、股权结构、管理团队、主营业务、融资历史、风险分析及行业定义、市场规模、竞争格局、技术趋势等完整章节。
+      </p>
+      <div class="project-summary-footer">
+        <div class="project-highlights">
+          <div class="project-highlight">🚀 并行子进程调度</div>
+          <div class="project-highlight">📄 Word 自动排版</div>
+          <div class="project-highlight">🔍 8 项环境检测</div>
+        </div>
+        <div class="project-tech">
+          <span>Python 3.10+</span><span>FastAPI</span><span>python-docx</span>
+          <span>Claude Code CLI</span><span>SSE</span><span>asyncio</span>
+          <span>Markdown→DOCX</span><span>pytest</span>
+        </div>
+        <div class="project-summary-links">
+          <a class="project-link" href="project-research.html">查看界面复现 →</a>
+          <a class="project-link-outline" href="https://github.com/MaJun0517/company-research" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section reveal" id="internship">
+  <div class="container">
+    <div class="section-label">实习经历</div>
+    <h2 class="section-title">工作经历</h2>
+    <div class="internship-card">
+      <div class="internship-header">
+        <h3>Apple 授权专营店（三水万达店）</h3>
+        <span class="internship-date">2025.06 – 2025.09</span>
+      </div>
+      <div class="internship-role">店员销售</div>
+      <ul class="internship-list">
+        <li>用户洞察与销售转化：日均接待 5-15 名顾客，快速判断决策类型精准推荐，擅长转化犹豫型顾客，连带销售成功率约 20%，月均销售额 8,000-20,000 元。</li>
+        <li>运营分析与跨角色协作：每月汇总分析客流、销售及库存数据，发现节假日人手不足规律并推动增配优化；兼任技术支持，诊断软硬件问题并引导售后服务。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section reveal" id="skills">
+  <div class="container">
+    <div class="section-label">职业技能</div>
+    <h2 class="section-title">技术能力</h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <h4>🤖 AI & 大模型</h4>
+        <div class="skill-tags">
+          <span>LangChain</span><span>RAG</span><span>MCP</span><span>Prompt Engineering</span>
+          <span>AIGC</span><span>jieba</span><span>情感分析</span><span>NLP</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h4>💻 全栈开发</h4>
+        <div class="skill-tags">
+          <span>Python</span><span>Django / DRF</span><span>FastAPI</span><span>Vue 3</span>
+          <span>RESTful API</span><span>SSE</span><span>asyncio 并发</span>
+        </div>
+      </div>
+      <div class="skill-card">
+        <h4>🛠 工程化 & DevOps</h4>
+        <div class="skill-tags">
+          <span>Docker</span><span>Docker Compose</span><span>PostgreSQL</span><span>SQLite</span>
+          <span>GitHub Actions</span><span>CI/CD</span><span>pytest</span><span>Linux</span>
+        </div>
+      </div>
+      <div class="skill-card skill-card-cert">
+        <h4>📜 证书</h4>
+        <img class="cert-img" src="harmonyos-cert.jpg" alt="鸿蒙应用开发者基础认证" loading="lazy">
+        <p class="cert-label">鸿蒙应用开发者基础认证</p>
+        <p class="cert-sub">HarmonyOS Application Developer</p>
+      </div>
+      <div class="skill-card">
+        <h4>👥 通用素养</h4>
+        <div class="skill-tags">
+          <span>沟通协调</span><span>团队协作</span><span>飞书</span>
+          <span>Office</span><span>用户需求洞察</span><span>快速学习</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <p>© 2026 马俊 · 广东东软学院 网络工程专业 · 2023 - 至今</p>
+    <div class="footer-links">
+      <a href="https://github.com/MaJun0517" target="_blank">GitHub</a>
+      <a href="mailto:743379974@qq.com">Email</a>
+      <a href="#about">返回顶部</a>
+    </div>
+  </div>
+</footer>
+
+<button class="back-to-top" id="backToTop" aria-label="返回顶部" title="返回顶部">↑</button>
+
+<script>
+// ---- Back to Top ----
+const backToTop = document.getElementById('backToTop');
+
+function toggleBackToTop() {
+  if (window.scrollY > 400) {
+    backToTop.classList.add('visible');
+  } else {
+    backToTop.classList.remove('visible');
+  }
+}
+
+backToTop.addEventListener('click', function() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+window.addEventListener('scroll', toggleBackToTop, { passive: true });
+
+// ---- Scroll Reveal ----
+const revealEls = document.querySelectorAll('.reveal');
+
+const revealObserver = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+
+revealEls.forEach(function(el) { revealObserver.observe(el); });
+
+// ---- Active Nav Highlight ----
+const navLinks = document.querySelectorAll('.nav-links a');
+const sections = [];
+
+navLinks.forEach(function(link) {
+  var id = link.getAttribute('href');
+  if (id && id.startsWith('#')) {
+    var section = document.getElementById(id.substring(1));
+    if (section) sections.push({ link: link, section: section });
+  }
+});
+
+function updateActiveNav() {
+  var scrollPos = window.scrollY + 100;
+  var current = null;
+
+  sections.forEach(function(item) {
+    if (item.section.offsetTop <= scrollPos) {
+      current = item;
+    }
+  });
+
+  navLinks.forEach(function(link) { link.classList.remove('active'); });
+  if (current) current.link.classList.add('active');
+}
+
+window.addEventListener('scroll', updateActiveNav, { passive: true });
+
+// ---- Init ----
+toggleBackToTop();
+updateActiveNav();
+</script>
+
+</body>
+</html>

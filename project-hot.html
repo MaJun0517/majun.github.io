@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日热点聚合平台 — 界面复现</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ---- Light Theme (default) ---- */
+:root {
+  --bg-primary: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f0f0f5;
+  --bg-header: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #666666;
+  --text-muted: #999999;
+  --border-color: #e0e0e0;
+  --shadow-card: 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.12);
+  --header-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  --radius-card: 12px;
+  --transition: 0.2s ease;
+}
+
+/* ---- Dark Theme ---- */
+[data-theme="dark"] {
+  --bg-primary: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #22223a;
+  --bg-header: #1a1a2e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #999999;
+  --text-muted: #666666;
+  --border-color: #2a2a3e;
+  --shadow-card: 0 1px 4px rgba(0,0,0,0.3);
+  --shadow-card-hover: 0 4px 16px rgba(0,0,0,0.5);
+  --header-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+
+/* ---- Base ---- */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color var(--transition), color var(--transition);
+  min-height: 100vh;
+}
+
+/* ---- Header ---- */
+.app-header {
+  background: var(--bg-header);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: var(--header-shadow);
+  position: sticky; top: 0; z-index: 50;
+}
+.header-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between; height: 56px;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-logo { font-size: 22px; }
+.header-title {
+  font-size: 17px; font-weight: 700; letter-spacing: -0.01em;
+}
+.header-actions { display: flex; align-items: center; gap: 12px; }
+
+.btn-theme {
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-color);
+  background: var(--bg-card); cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background var(--transition);
+}
+.btn-theme:hover { background: var(--bg-card-hover); }
+
+.badge-beta {
+  font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px;
+  background: #fef2f2; color: #e94560; letter-spacing: 0.03em;
+}
+
+/* ---- Platform Tabs ---- */
+.platform-tabs {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+  margin-bottom: 28px; padding-top: 24px;
+}
+.tab {
+  display: flex; align-items: center; gap: 6px;
+  padding: 10px 20px; border-radius: 24px;
+  border: 2px solid; font-size: 15px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s ease;
+  background: var(--bg-card); font-family: inherit;
+}
+.tab:hover { transform: translateY(-1px); opacity: 0.9; }
+.tab.active { box-shadow: 0 4px 12px rgba(0,0,0,0.15); color: #fff; }
+.tab-icon { font-size: 18px; }
+.tab-name { white-space: nowrap; }
+
+/* ---- Layout ---- */
+.page {
+  max-width: 1100px; margin: 0 auto; padding: 0 20px 60px;
+}
+.home-layout {
+  display: flex; gap: 24px; align-items: flex-start;
+}
+.main-col { flex: 1; min-width: 0; }
+.side-col { flex: 0 0 280px; }
+
+/* ---- Section Header ---- */
+.section-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 2px solid var(--border-color);
+}
+.section-icon { font-size: 24px; }
+.section-title { font-size: 20px; font-weight: 700; margin: 0; }
+.section-count {
+  font-size: 12px; color: var(--text-muted);
+  background: var(--bg-primary); padding: 2px 10px;
+  border-radius: 10px; margin-left: auto;
+}
+
+/* ---- Ranked List ---- */
+.rank-list { display: flex; flex-direction: column; gap: 8px; }
+.rank-item {
+  display: flex; align-items: center; gap: 16px;
+  background: var(--bg-card); border-radius: var(--radius-card);
+  padding: 16px 20px; box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition), transform var(--transition);
+  cursor: pointer; border: 1px solid transparent;
+}
+.rank-item:hover {
+  box-shadow: var(--shadow-card-hover); transform: translateX(4px);
+  border-color: var(--border-color);
+}
+.rank-num {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 800; flex-shrink: 0;
+  color: #fff;
+}
+.rank-num.top1 { background: linear-gradient(135deg, #f7971e, #ffd200); }
+.rank-num.top2 { background: linear-gradient(135deg, #9e9e9e, #bdbdbd); }
+.rank-num.top3 { background: linear-gradient(135deg, #cd7f32, #d4956b); }
+.rank-num.normal { background: #e5e7eb; color: #6b7280; }
+.rank-body { flex: 1; min-width: 0; }
+.rank-title {
+  font-size: 15px; font-weight: 600; line-height: 1.4; margin-bottom: 4px;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rank-meta {
+  font-size: 12px; color: var(--text-muted);
+  display: flex; gap: 12px;
+}
+.rank-heat {
+  font-size: 14px; font-weight: 700; flex-shrink: 0;
+}
+.rank-heat.fire { color: #e94560; }
+.rank-heat.hot { color: #f59e0b; }
+
+/* ---- Feed Grid ---- */
+.feed-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.feed-card {
+  background: var(--bg-card); border-radius: var(--radius-card);
+  padding: 20px; box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition), transform var(--transition);
+  cursor: pointer; border: 1px solid transparent;
+}
+.feed-card:hover {
+  box-shadow: var(--shadow-card-hover); transform: translateY(-2px);
+  border-color: var(--border-color);
+}
+.feed-card-title {
+  font-size: 15px; font-weight: 600; line-height: 1.5; margin-bottom: 12px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.feed-card-meta {
+  font-size: 12px; color: var(--text-muted);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.feed-tag {
+  padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;
+  background: #fef2f2; color: #e94560;
+}
+
+/* ---- Detail Panel ---- */
+.detail-overlay {
+  position: fixed; inset: 0; z-index: 100;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.detail-overlay.open { display: flex; }
+.detail-panel {
+  background: var(--bg-card); border-radius: 16px;
+  max-width: 640px; width: 100%; max-height: 80vh; overflow-y: auto;
+  padding: 32px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  position: relative;
+}
+.detail-close {
+  position: absolute; top: 16px; right: 20px;
+  width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--border-color);
+  background: var(--bg-card); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.detail-close:hover { background: var(--bg-card-hover); }
+.detail-title {
+  font-size: 22px; font-weight: 800; line-height: 1.4; margin-bottom: 16px;
+  padding-right: 40px;
+}
+.detail-meta-row {
+  display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+  font-size: 13px; color: var(--text-muted);
+}
+.detail-meta-row span { display: flex; align-items: center; gap: 4px; }
+.detail-summary {
+  font-size: 14px; line-height: 1.8; color: var(--text-secondary);
+  margin-bottom: 20px; padding: 16px; background: var(--bg-primary);
+  border-radius: 10px;
+}
+.detail-keywords { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.detail-keywords span {
+  padding: 4px 12px; border-radius: 10px; font-size: 12px; font-weight: 500;
+  background: var(--bg-primary); border: 1px solid var(--border-color);
+}
+.detail-sentiment {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-size: 14px;
+}
+.detail-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 20px; background: #2563eb; color: #fff;
+  border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;
+  transition: opacity var(--transition);
+}
+.detail-link:hover { opacity: 0.85; }
+
+/* ---- Auth Modals ---- */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+  display: none; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--bg-card); border-radius: 16px;
+  max-width: 420px; width: 100%; padding: 32px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-close {
+  position: absolute; top: 12px; right: 16px;
+  width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--border-color);
+  background: var(--bg-card); font-size: 16px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.modal-close:hover { background: var(--bg-card-hover); }
+.modal-title {
+  font-size: 22px; font-weight: 800; margin-bottom: 24px;
+}
+.modal-form { display: flex; flex-direction: column; gap: 14px; }
+.modal-form label {
+  font-size: 13px; font-weight: 600; color: var(--text-secondary);
+  margin-bottom: -10px;
+}
+.modal-form input {
+  padding: 12px 14px; font-size: 14px; border: 1.5px solid var(--border-color);
+  border-radius: 10px; outline: none; background: var(--bg-card);
+  color: var(--text-primary); font-family: inherit;
+  transition: border-color var(--transition);
+}
+.modal-form input:focus { border-color: #2563eb; }
+.btn-auth {
+  padding: 12px 20px; font-size: 15px; font-weight: 700;
+  background: #2563eb; color: #fff; border: none;
+  border-radius: 10px; cursor: pointer; margin-top: 8px;
+  transition: opacity var(--transition);
+}
+.btn-auth:hover { opacity: 0.9; }
+.modal-switch {
+  text-align: center; margin-top: 16px; font-size: 13px; color: var(--text-muted);
+}
+.modal-switch a { color: #2563eb; cursor: pointer; font-weight: 600; text-decoration: none; }
+.modal-switch a:hover { text-decoration: underline; }
+.modal-msg {
+  font-size: 13px; margin-top: 8px; padding: 8px 12px; border-radius: 8px; display: none;
+}
+.modal-msg.ok { background: #eafaf1; color: #27ae60; }
+.modal-msg.error { background: #fdecea; color: #e74c3c; }
+.btn-login-nav {
+  padding: 6px 16px; font-size: 13px; font-weight: 600;
+  background: #2563eb; color: #fff; border: none;
+  border-radius: 8px; cursor: pointer; font-family: inherit;
+  transition: opacity var(--transition);
+}
+.btn-login-nav:hover { opacity: 0.85; }
+.user-badge {
+  display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;
+}
+.user-badge .avatar { width: 28px; height: 28px; border-radius: 50%; background: #2563eb; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.btn-logout { font-size: 12px; color: var(--text-muted); cursor: pointer; border: none; background: none; font-family: inherit; }
+.btn-logout:hover { color: #e94560; }
+
+/* ---- Sidebar ---- */
+.trend-sidebar {
+  background: var(--bg-card); border-radius: var(--radius-card);
+  padding: 22px; box-shadow: var(--shadow-card);
+  position: sticky; top: 72px; font-size: 13px;
+}
+.sidebar-header {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 16px; font-weight: 700; color: var(--text-primary);
+  padding-bottom: 14px; margin-bottom: 14px;
+  border-bottom: 2px solid var(--border-color);
+}
+.sidebar-icon { font-size: 20px; }
+.sidebar-block { margin-bottom: 18px; }
+.block-title {
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
+}
+.trend-text {
+  font-size: 13px; line-height: 1.75; color: var(--text-secondary);
+}
+.keyword-cloud { display: flex; flex-wrap: wrap; gap: 5px; }
+.kw-tag {
+  display: inline-block; padding: 2px 10px; border-radius: 10px;
+  background: var(--bg-primary); color: var(--text-secondary);
+  border: 1px solid var(--border-color); font-weight: 500; cursor: default;
+}
+
+/* Sentiment bar */
+.sentiment-bar {
+  display: flex; height: 20px; border-radius: 10px;
+  overflow: hidden; margin-bottom: 8px;
+}
+.bar-seg {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: #fff; min-width: 0;
+}
+.bar-positive { background: #4caf50; }
+.bar-neutral  { background: #9e9e9e; }
+.bar-negative { background: #f44336; }
+.sentiment-legend { display: flex; gap: 16px; font-size: 12px; color: var(--text-muted); }
+.legend-positive, .legend-negative, .legend-neutral {
+  display: flex; align-items: center; gap: 3px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 900px) {
+  .home-layout { flex-direction: column; }
+  .side-col { flex: 1 1 auto; width: 100%; }
+  .trend-sidebar { position: static; }
+}
+@media (max-width: 600px) {
+  .tab { padding: 8px 14px; font-size: 13px; }
+  .tab-icon { font-size: 16px; }
+  .detail-panel { padding: 20px; }
+  .detail-title { font-size: 18px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="app-header">
+  <div class="header-inner">
+    <div class="header-left">
+      <span class="header-logo">📊</span>
+      <span class="header-title">每日热点聚合</span>
+      <span class="badge-beta">界面复现</span>
+    </div>
+    <div class="header-actions">
+      <button id="btnRefresh" class="btn-login-nav" style="background:transparent;color:var(--text-primary);border:1px solid var(--border-color);margin-right:4px;" title="模拟刷新">🔄 刷新</button>
+      <span id="userArea"></span>
+      <button id="themeToggle" class="btn-theme" title="切换主题">🌓</button>
+    </div>
+  </div>
+</header>
+
+<!-- Platform Tabs -->
+<div class="platform-tabs" id="platformTabs"></div>
+
+<!-- Main Layout -->
+<div class="page">
+  <div class="home-layout">
+    <div class="main-col">
+      <div class="section-header" id="sectionHeader"></div>
+      <div id="contentArea"></div>
+    </div>
+    <div class="side-col">
+      <aside class="trend-sidebar" id="trendSidebar"></aside>
+    </div>
+  </div>
+</div>
+
+<!-- Login Modal -->
+<div class="modal-overlay" id="loginOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeLogin()">✕</button>
+    <h3 class="modal-title">🔐 登录</h3>
+    <div class="modal-form">
+      <label>用户名</label>
+      <input type="text" id="login-username" placeholder="输入用户名" autocomplete="off">
+      <label>密码</label>
+      <input type="password" id="login-password" placeholder="输入密码" autocomplete="off">
+      <button class="btn-auth" id="btn-login-submit">登录</button>
+      <div id="login-msg" class="modal-msg"></div>
+    </div>
+    <div class="modal-switch">
+      还没有账号？<a onclick="switchToRegister()">立即注册</a>
+    </div>
+  </div>
+</div>
+
+<!-- Register Modal -->
+<div class="modal-overlay" id="registerOverlay">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeRegister()">✕</button>
+    <h3 class="modal-title">📝 注册</h3>
+    <div class="modal-form">
+      <label>用户名</label>
+      <input type="text" id="reg-username" placeholder="输入用户名" autocomplete="off">
+      <label>密码</label>
+      <input type="password" id="reg-password" placeholder="至少 6 位" autocomplete="off">
+      <label>确认密码</label>
+      <input type="password" id="reg-password2" placeholder="再次输入密码" autocomplete="off">
+      <button class="btn-auth" id="btn-reg-submit">注册</button>
+      <div id="reg-msg" class="modal-msg"></div>
+    </div>
+    <div class="modal-switch">
+      已有账号？<a onclick="switchToLogin()">立即登录</a>
+    </div>
+  </div>
+</div>
+
+<!-- Detail Overlay -->
+<div class="detail-overlay" id="detailOverlay">
+  <div class="detail-panel" id="detailPanel"></div>
+</div>
+
+<script>
+// ---- Mock Data ----
+const PLATFORMS = [
+  { slug: 'douyin', name: '抖音', icon: '🎵', color: '#1a1a2e', display_type: 'ranked' },
+  { slug: 'weibo', name: '微博', icon: '💬', color: '#e94560', display_type: 'ranked' },
+  { slug: 'toutiao', name: '头条', icon: '📰', color: '#e53935', display_type: 'ranked' },
+  { slug: 'xiaohongshu', name: '小红书', icon: '📕', color: '#ff2442', display_type: 'feed' },
+  { slug: 'yangshi', name: '央视新闻', icon: '📺', color: '#1565c0', display_type: 'feed' },
+  { slug: 'youtube', name: 'YouTube', icon: '▶️', color: '#ff0000', display_type: 'feed' },
+];
+
+const ARTICLES = {
+  douyin: [
+    { id: 1, title: '啥是大运？成都大运会这些亮点不容错过', heat_score: 12044647, heat_label: '🔥 1204w', rank: 1, source_url: '#', summary: '第31届世界大学生夏季运动会将在成都举行，各项筹备工作已进入最后冲刺阶段。场馆建设、志愿者培训、开闭幕式彩排等环节全面就绪。', keywords: ['大运会', '成都', '体育', '开幕式', '志愿者'], sentiment: 'positive' },
+    { id: 2, title: '新修订的商标法明年起施行，这些变化与你有关', heat_score: 11732874, heat_label: '🔥 1173w', rank: 2, source_url: '#', summary: '新修订的《商标法》将于明年1月1日起正式施行。此次修订重点强化了对恶意抢注行为的规制，加大了对商标侵权行为的惩罚力度。', keywords: ['商标法', '知识产权', '法律', '修订'], sentiment: 'neutral' },
+    { id: 3, title: '高考成绩陆续公布，各地分数线出炉', heat_score: 9824500, heat_label: '🔥 982w', rank: 3, source_url: '#', summary: '2026年高考成绩陆续公布，各省市录取分数线相继出炉。考生可通过各地教育考试院官网查询成绩。', keywords: ['高考', '分数线', '教育', '志愿填报'], sentiment: 'neutral' },
+    { id: 4, title: '新能源车企6月交付量出炉，比亚迪继续领跑', heat_score: 7653200, heat_label: '🔥 765w', rank: 4, source_url: '#', summary: '多家新能源车企公布6月交付数据。比亚迪以35.2万辆继续位居首位，理想、蔚来、小鹏等品牌也实现了环比增长。', keywords: ['新能源', '汽车', '比亚迪', '交付'], sentiment: 'positive' },
+    { id: 5, title: '多地持续高温，气象部门发布红色预警', heat_score: 6890100, heat_label: '♨ 689w', rank: 5, source_url: '#', summary: '我国中东部地区持续高温天气，部分地区最高气温超过40℃。气象部门提醒做好防暑降温工作。', keywords: ['高温', '天气', '预警', '防暑'], sentiment: 'negative' },
+  ],
+  weibo: [
+    { id: 6, title: '#成都大运会开幕式彩排现场#', heat_score: 8923400, heat_label: '🔥 892w', rank: 1, source_url: '#', summary: '成都大运会开幕式彩排画面曝光，美轮美奂的灯光秀和精彩的文艺表演引发网友热议。', keywords: ['大运会', '开幕式', '彩排', '成都'], sentiment: 'positive' },
+    { id: 7, title: '#2026高考分数线# 全国各省陆续公布', heat_score: 8120000, heat_label: '🔥 812w', rank: 2, source_url: '#', summary: '2026年高考各省分数线陆续公布中，考生和家长密切关注。', keywords: ['高考', '分数线', '录取'], sentiment: 'neutral' },
+    { id: 8, title: '#某明星涉嫌偷税漏税被调查#', heat_score: 7456000, heat_label: '🔥 745w', rank: 3, source_url: '#', summary: '据税务部门通报，某知名艺人因涉嫌偷税漏税正在接受调查。', keywords: ['明星', '偷税', '税务', '调查'], sentiment: 'negative' },
+    { id: 9, title: '#新发现一颗近地小行星# 将对地球构成威胁吗', heat_score: 6789000, heat_label: '♨ 678w', rank: 4, source_url: '#', summary: '国际天文学家发现一颗直径约300米的近地小行星，目前正在密切监测其运行轨道。', keywords: ['小行星', '天文', '地球', '科学'], sentiment: 'neutral' },
+    { id: 10, title: '#AI取代人类工作# 雷军：AI是工具不是敌人', heat_score: 6234000, heat_label: '♨ 623w', rank: 5, source_url: '#', summary: '小米创始人雷军在公开演讲中表示AI是人类的好帮手，不会完全取代人类工作。', keywords: ['AI', '雷军', '人工智能', '就业'], sentiment: 'positive' },
+  ],
+  toutiao: [
+    { id: 11, title: '全国多地发布高温红色预警，电力保供形势严峻', heat_score: 9200000, heat_label: '🔥 920w', rank: 1, source_url: '#', summary: '受持续高温影响，多地用电负荷创历史新高，电力部门全力保障民生用电。', keywords: ['高温', '电力', '保供', '预警'], sentiment: 'negative' },
+    { id: 12, title: '央行宣布降准0.25个百分点，释放流动性超5000亿', heat_score: 8560000, heat_label: '🔥 856w', rank: 2, source_url: '#', summary: '中国人民银行决定下调金融机构存款准备金率0.25个百分点，旨在支持实体经济发展。', keywords: ['央行', '降准', '流动性', '经济'], sentiment: 'positive' },
+    { id: 13, title: '国产大飞机C919完成首次商业载客运营一周年', heat_score: 7340000, heat_label: '🔥 734w', rank: 3, source_url: '#', summary: 'C919商业运营一周年，累计载客超过50万人次，安全飞行记录良好。', keywords: ['C919', '大飞机', '国产', '航空'], sentiment: 'positive' },
+    { id: 14, title: '苹果Vision Pro 2或将支持5G独立通信', heat_score: 6120000, heat_label: '♨ 612w', rank: 4, source_url: '#', summary: '供应链消息称下一代Apple Vision Pro将内置5G基带，支持独立蜂窝网络通信。', keywords: ['苹果', 'Vision Pro', '5G', 'XR'], sentiment: 'positive' },
+    { id: 15, title: '中超联赛第15轮：上海海港逆转取胜登顶积分榜', heat_score: 5890000, heat_label: '♨ 589w', rank: 5, source_url: '#', summary: '上海海港在客场3-2逆转击败对手，凭借净胜球优势登顶积分榜榜首。', keywords: ['中超', '足球', '上海海港', '体育'], sentiment: 'positive' },
+  ],
+  xiaohongshu: [
+    { id: 16, title: '成都大运会观赛攻略！这些场馆值得打卡', source_url: '#', summary: '整理了成都大运会场馆周边吃喝玩乐全攻略，包括交通出行、美食推荐和最值得看的比赛项目。', tag: '热门' },
+    { id: 17, title: '高考志愿填报避坑指南 | 过来人的血泪经验', source_url: '#', summary: '分享高考志愿填报中常见的10个误区，以及如何根据位次、兴趣和就业前景科学选择院校和专业。', tag: '干货' },
+    { id: 18, title: '夏日穿搭分享 | 35℃高温也能美美出门', source_url: '#', summary: '高温天气如何穿得清凉又时髦？整理了5套夏日通勤穿搭look，轻薄面料是首选。', tag: '时尚' },
+    { id: 19, title: '打工人午餐便当合集 | 一周不重样', source_url: '#', summary: '分享一周五天的工作日便当食谱，每份成本不到15元，营养均衡还好看。', tag: '美食' },
+    { id: 20, title: '自学编程路线分享 | 从零基础到拿到大厂offer', source_url: '#', summary: '零基础转码一年，整理了前端开发的学习路线和资源推荐，附面试经验总结。', tag: '学习' },
+    { id: 21, title: 'iPhone隐藏功能大盘点 | 用了一年才发现这些', source_url: '#', summary: '盘点了20个iPhone不为人知的实用功能，从快捷指令到隐私设置，提升使用效率。', tag: '数码' },
+  ],
+  yangshi: [
+    { id: 22, title: '习近平向2026世界人工智能大会致贺信', source_url: '#', summary: '国家主席习近平向2026世界人工智能大会致贺信，强调推动人工智能健康发展，更好造福各国人民。', tag: '要闻' },
+    { id: 23, title: '我国成功发射遥感四十二号03星', source_url: '#', summary: '我国在太原卫星发射中心使用长征六号改运载火箭，成功将遥感四十二号03星发射升空。', tag: '科技' },
+    { id: 24, title: '南方多地遭遇强降雨 国家防总启动防汛四级响应', source_url: '#', summary: '受持续强降雨影响，南方多地出现洪涝灾害。国家防总已启动防汛四级应急响应。', tag: '要闻' },
+    { id: 25, title: '上半年我国外贸进出口总值同比增长6.2%', source_url: '#', summary: '海关总署发布数据，2026年上半年我国货物贸易进出口总值21.3万亿元，同比增长6.2%。', tag: '经济' },
+    { id: 26, title: '2026年全国高考报名人数达1350万 创历史新高', source_url: '#', summary: '教育部公布2026年全国高考报名人数为1350万人，比去年增加42万人，连续第六年超过1000万。', tag: '教育' },
+  ],
+  youtube: [
+    { id: 27, title: 'AI in 2026: The State of Artificial Intelligence', source_url: '#', summary: 'An overview of AI advancements in 2026, covering LLMs, robotics, and AI safety developments.', tag: 'AI' },
+    { id: 28, title: 'Building a Full-Stack App with Django 6.0 and Vue 3', source_url: '#', summary: 'Complete tutorial on building a modern full-stack web application using Django 6.0 and Vue 3.', tag: 'Dev' },
+    { id: 29, title: 'The Future of Electric Vehicles: 2026 Market Analysis', source_url: '#', summary: 'Deep dive into the EV market landscape in 2026, comparing major players and emerging technologies.', tag: 'Tech' },
+    { id: 30, title: 'China Economic Outlook 2026: Recovery and Challenges', source_url: '#', summary: 'Analysis of China\'s economic trajectory in 2026, covering real estate, consumption, and policy directions.', tag: 'Economy' },
+  ],
+};
+
+const TRENDS = {
+  douyin: {
+    trend_summaries: [
+      '抖音平台当前热点集中在社会民生（大运会、高考）和科技消费（新能源车、AI）两大领域。体育赛事和消费电子类内容互动率最高，用户对实用资讯和娱乐内容需求并存。',
+      '跨平台洞察：大运会相关话题在抖音、微博、小红书三端同时上榜，形成跨平台传播效应，总曝光量预估超过 8 亿次。高互动内容均具备"强情绪 + 实用信息"双重特征。',
+    ],
+    top_keywords: ['大运会', '高考', '新能源', '高温', '商标法', '教育', '汽车', 'AI', '天气', '法律', '高校', '志愿'],
+    sentiment: { positive: 12, neutral: 18, negative: 5 },
+    analyzed_count: 35,
+  },
+  weibo: {
+    trend_summaries: [
+      '微博热搜以娱乐和社会议题为主，明星相关话题仍占据重要比重。大运会、高考分数线等公共事件讨论热度高，社会性议题的舆论场呈现多元分化趋势。',
+      '跨平台洞察：微博的舆论发酵能力最强——#大运会开幕式# 话题阅读量 4.2 亿，讨论量 28 万条，是抖音同话题互动量的 3 倍以上。社会负面事件（偷税）在微博的传播速度显著快于其他平台。',
+    ],
+    top_keywords: ['大运会', '高考', '明星', '偷税', '小行星', 'AI', '雷军', '教育', '社会', '科技', '开幕式', '热搜'],
+    sentiment: { positive: 10, neutral: 15, negative: 10 },
+    analyzed_count: 35,
+  },
+  toutiao: {
+    trend_summaries: [
+      '头条平台的内容生态偏重时政财经和科技产业。高温天气、央行政策等硬新闻占据主要流量，C919、Vision Pro等科技产品关注度持续走高。',
+      '跨平台洞察：财经类内容（央行降准、外贸数据）在头条的阅读完成率比娱乐类高 42%，用户画像偏向 30-50 岁男性。科技硬件的长尾阅读效应明显，Vision Pro 文章 48 小时后仍有持续流量。',
+    ],
+    top_keywords: ['高温', '央行', '降准', 'C919', 'Vision Pro', '电力', '科技', '经济', '苹果', '中超', '财经', 'AI'],
+    sentiment: { positive: 14, neutral: 16, negative: 5 },
+    analyzed_count: 35,
+  },
+  xiaohongshu: {
+    trend_summaries: [
+      '小红书社区以生活方式内容为主，大运会观赛攻略和高考志愿填报是近期热门话题。夏日穿搭、美食便当等轻量化内容持续获得高互动。',
+      '跨平台洞察：小红书的"攻略型"内容（观赛、志愿填报、编程学习）收藏率远高于点赞率（约 3:1），表明用户将平台作为决策工具使用。"自学编程"类笔记评论中高频出现"转行""大厂"等求职关键词。',
+    ],
+    top_keywords: ['大运会', '高考', '穿搭', '便当', '编程', 'iPhone', '攻略', '学习', '美食', '时尚', '求职', '转行'],
+    sentiment: { positive: 20, neutral: 10, negative: 0 },
+    analyzed_count: 30,
+  },
+  yangshi: {
+    trend_summaries: [
+      '央视新闻以时政要闻和重大科技进展为主。AI大会贺信、卫星发射、外贸数据等硬新闻占据主导，体现了国家媒体的报道取向。',
+      '跨平台洞察：央视新闻的内容被其他平台大量引用作为权威信源——AI 大会贺信被 6 个平台 127 篇文章引用。"遥感卫星发射"类科技新闻在头条和 YouTube 的二次传播效果最好。',
+    ],
+    top_keywords: ['AI', '卫星', '防汛', '外贸', '高考', '科技', '经济', '教育', '政策', '国际', '信源', '引用'],
+    sentiment: { positive: 12, neutral: 18, negative: 5 },
+    analyzed_count: 35,
+  },
+  youtube: {
+    trend_summaries: [
+      'YouTube平台的技术和财经内容以英文为主，AI、电动车和中国经济是近期热门话题。开发者社区对Django 6.0 + Vue 3等技术栈的关注度上升。',
+      '跨平台洞察：YouTube 的 AI 内容观看时长同比增长 186%，长视频（>20min）完播率高于短视频。中国经济相关内容的主要受众为海外华人和国际投资者，评论区以英文讨论为主。Django 6.0 教程在印度和东南亚开发者中传播最广。',
+    ],
+    top_keywords: ['AI', 'Django', 'Vue', 'EV', 'China', 'Economy', 'Tech', 'Robot', 'LLM', 'Fullstack', 'Tutorial', 'Market'],
+    sentiment: { positive: 15, neutral: 12, negative: 3 },
+    analyzed_count: 30,
+  },
+};
+
+// ---- State ----
+let activeSlug = 'douyin';
+let theme = 'light';
+
+// ---- Render ----
+function renderAll() {
+  renderTabs();
+  renderSectionHeader();
+  renderContent();
+  renderTrends();
+}
+
+function renderTabs() {
+  const container = document.getElementById('platformTabs');
+  container.innerHTML = PLATFORMS.map(p => {
+    const isActive = p.slug === activeSlug;
+    const style = isActive
+      ? `background:${p.color};color:#fff;border-color:${p.color}`
+      : `border-color:${p.color}40;color:${p.color}`;
+    return `<button class="tab${isActive ? ' active' : ''}" style="${style}" data-slug="${p.slug}">
+      <span class="tab-icon">${p.icon}</span>
+      <span class="tab-name">${p.name}</span>
+    </button>`;
+  }).join('');
+
+  container.querySelectorAll('.tab').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSlug = btn.dataset.slug;
+      renderAll();
+    });
+  });
+}
+
+function renderSectionHeader() {
+  const p = PLATFORMS.find(p => p.slug === activeSlug);
+  const articles = ARTICLES[activeSlug] || [];
+  const isRanked = p?.display_type === 'ranked';
+  document.getElementById('sectionHeader').innerHTML = `
+    <span class="section-icon">${p?.icon || ''}</span>
+    <h2 class="section-title">${p?.name || ''} ${isRanked ? '热榜' : '热门内容'}</h2>
+    <span class="section-count">${articles.length} 条</span>
+  `;
+}
+
+function renderContent() {
+  const p = PLATFORMS.find(p => p.slug === activeSlug);
+  const articles = ARTICLES[activeSlug] || [];
+  const isRanked = p?.display_type === 'ranked';
+  const area = document.getElementById('contentArea');
+
+  if (isRanked) {
+    area.innerHTML = `<div class="rank-list">${articles.map((a, i) => {
+      let cls = 'normal';
+      if (a.rank === 1) cls = 'top1';
+      else if (a.rank === 2) cls = 'top2';
+      else if (a.rank === 3) cls = 'top3';
+      return `
+      <div class="rank-item" data-id="${a.id}">
+        <div class="rank-num ${cls}">${a.rank}</div>
+        <div class="rank-body">
+          <div class="rank-title">${a.title}</div>
+          <div class="rank-meta">
+            <span>${a.sentiment === 'positive' ? '😊 正面' : a.sentiment === 'negative' ? '😟 负面' : '😐 中性'}</span>
+          </div>
+        </div>
+        <div class="rank-heat ${i === 0 ? 'fire' : 'hot'}">${a.heat_label}</div>
+      </div>`;
+    }).join('')}</div>`;
+  } else {
+    area.innerHTML = `<div class="feed-grid">${articles.map(a => `
+      <div class="feed-card" data-id="${a.id}">
+        <div class="feed-card-title">${a.title}</div>
+        <div class="feed-card-meta">
+          <span>${a.summary ? a.summary.substring(0, 40) + '...' : ''}</span>
+          ${a.tag ? `<span class="feed-tag">${a.tag}</span>` : ''}
+        </div>
+      </div>
+    `).join('')}</div>`;
+  }
+
+  // Bind click to open detail
+  area.querySelectorAll('.rank-item, .feed-card').forEach(el => {
+    el.addEventListener('click', () => {
+      const id = parseInt(el.dataset.id);
+      const article = findArticle(id);
+      if (article) showDetail(article);
+    });
+  });
+}
+
+function findArticle(id) {
+  for (const slug of Object.keys(ARTICLES)) {
+    const found = ARTICLES[slug].find(a => a.id === id);
+    if (found) return found;
+  }
+  return null;
+}
+
+function showDetail(article) {
+  const overlay = document.getElementById('detailOverlay');
+  const panel = document.getElementById('detailPanel');
+
+  panel.innerHTML = `
+    <button class="detail-close" onclick="closeDetail()">✕</button>
+    <h2 class="detail-title">${article.title}</h2>
+    <div class="detail-meta-row">
+      <span>${article.sentiment === 'positive' ? '😊 正面' : article.sentiment === 'negative' ? '😟 负面' : '😐 中性'}</span>
+      ${article.heat_label ? `<span>${article.heat_label}</span>` : ''}
+      ${article.tag ? `<span>📌 ${article.tag}</span>` : ''}
+    </div>
+    ${article.summary ? `<div class="detail-summary">${article.summary}</div>` : ''}
+    ${article.keywords ? `
+    <div class="detail-keywords">
+      ${article.keywords.map(k => `<span>${k}</span>`).join('')}
+    </div>` : ''}
+    ${article.sentiment ? `
+    <div class="detail-sentiment">
+      情感倾向：${article.sentiment === 'positive' ? '😊 正面' : article.sentiment === 'negative' ? '😟 负面' : '😐 中性'}
+    </div>` : ''}
+    <a class="detail-link" href="${article.source_url}" target="_blank">查看原文 ↗</a>
+  `;
+
+  overlay.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('detailOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeDetail();
+});
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDetail();
+});
+
+function renderTrends() {
+  const t = TRENDS[activeSlug];
+  if (!t) return;
+
+  document.getElementById('trendSidebar').innerHTML = `
+    <div class="sidebar-header">
+      <span class="sidebar-icon">🤖</span>
+      <span>AI 趋势解读</span>
+    </div>
+    ${t.trend_summaries ? `
+    <div class="sidebar-block">
+      <div class="block-title">📝 趋势摘要</div>
+      <p class="trend-text">${t.trend_summaries[0]}</p>
+      ${t.trend_summaries[1] ? `<p class="trend-text" style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border-color);font-size:12px;color:var(--text-muted);">${t.trend_summaries[1]}</p>` : ''}
+    </div>` : ''}
+    ${t.top_keywords ? `
+    <div class="sidebar-block">
+      <div class="block-title">🔑 热门关键词</div>
+      <div class="keyword-cloud">
+        ${t.top_keywords.slice(0, 10).map((kw, i) =>
+          `<span class="kw-tag" style="font-size:${14 - i * 0.5}px;opacity:${1 - i * 0.06}">${kw}</span>`
+        ).join('')}
+      </div>
+    </div>` : ''}
+    ${t.sentiment ? `
+    <div class="sidebar-block">
+      <div class="block-title">💭 情感分布</div>
+      <div class="sentiment-bar">
+        <div class="bar-seg bar-positive" style="flex:${t.sentiment.positive || 0}">
+          ${t.sentiment.positive ? Math.round(t.sentiment.positive / t.analyzed_count * 100) + '%' : ''}
+        </div>
+        <div class="bar-seg bar-neutral" style="flex:${t.sentiment.neutral || 0}">
+          ${t.sentiment.neutral ? Math.round(t.sentiment.neutral / t.analyzed_count * 100) + '%' : ''}
+        </div>
+        <div class="bar-seg bar-negative" style="flex:${t.sentiment.negative || 0}">
+          ${t.sentiment.negative ? Math.round(t.sentiment.negative / t.analyzed_count * 100) + '%' : ''}
+        </div>
+      </div>
+      <div class="sentiment-legend">
+        <span class="legend-positive">😊 ${t.sentiment.positive || 0}</span>
+        <span class="legend-neutral">😐 ${t.sentiment.neutral || 0}</span>
+        <span class="legend-negative">😟 ${t.sentiment.negative || 0}</span>
+      </div>
+    </div>` : ''}
+  `;
+}
+
+// ---- Theme Toggle ----
+const themeToggle = document.getElementById('themeToggle');
+themeToggle.addEventListener('click', () => {
+  theme = theme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', theme);
+  themeToggle.textContent = theme === 'light' ? '🌓' : '☀️';
+  localStorage.setItem('hot-theme', theme);
+});
+
+// Init theme from localStorage
+const savedTheme = localStorage.getItem('hot-theme') || 'light';
+theme = savedTheme;
+if (theme === 'dark') {
+  document.documentElement.setAttribute('data-theme', 'dark');
+  themeToggle.textContent = '☀️';
+}
+
+// ---- Auth State ----
+let currentUser = null;
+
+// ---- Init ----
+renderAll();
+renderUserArea();
+
+function renderUserArea() {
+  const area = document.getElementById('userArea');
+  if (currentUser) {
+    area.innerHTML = `<div class="user-badge">
+      <div class="avatar">${currentUser[0].toUpperCase()}</div>
+      <span>${currentUser}</span>
+      <button class="btn-logout" id="btnLogout">退出</button>
+    </div>`;
+    document.getElementById('btnLogout').onclick = function() {
+      currentUser = null;
+      renderUserArea();
+    };
+  } else {
+    area.innerHTML = `<button class="btn-login-nav" id="btnLoginNav">登录</button>`;
+    document.getElementById('btnLoginNav').onclick = openLogin;
+  }
+}
+
+// ---- Login Modal ----
+function openLogin() {
+  document.getElementById('loginOverlay').classList.add('open');
+  document.getElementById('login-msg').style.display = 'none';
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+  document.body.style.overflow = 'hidden';
+}
+function closeLogin() {
+  document.getElementById('loginOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function switchToRegister() {
+  closeLogin();
+  openRegister();
+}
+
+// ---- Register Modal ----
+function openRegister() {
+  document.getElementById('registerOverlay').classList.add('open');
+  document.getElementById('reg-msg').style.display = 'none';
+  document.getElementById('reg-username').value = '';
+  document.getElementById('reg-password').value = '';
+  document.getElementById('reg-password2').value = '';
+  document.body.style.overflow = 'hidden';
+}
+function closeRegister() {
+  document.getElementById('registerOverlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function switchToLogin() {
+  closeRegister();
+  openLogin();
+}
+
+// ---- Login Submit ----
+document.getElementById('btn-login-submit').onclick = function() {
+  const u = document.getElementById('login-username').value.trim();
+  const p = document.getElementById('login-password').value.trim();
+  const msg = document.getElementById('login-msg');
+  if (!u || !p) {
+    msg.textContent = '请填写用户名和密码';
+    msg.className = 'modal-msg error'; msg.style.display = 'block';
+    return;
+  }
+  // Simulate login
+  msg.textContent = '登录成功！';
+  msg.className = 'modal-msg ok'; msg.style.display = 'block';
+  setTimeout(() => {
+    currentUser = u;
+    closeLogin();
+    renderUserArea();
+  }, 600);
+};
+
+// ---- Register Submit ----
+document.getElementById('btn-reg-submit').onclick = function() {
+  const u = document.getElementById('reg-username').value.trim();
+  const p = document.getElementById('reg-password').value.trim();
+  const p2 = document.getElementById('reg-password2').value.trim();
+  const msg = document.getElementById('reg-msg');
+  if (!u || !p) {
+    msg.textContent = '请填写用户名和密码';
+    msg.className = 'modal-msg error'; msg.style.display = 'block';
+    return;
+  }
+  if (p.length < 6) {
+    msg.textContent = '密码至少 6 位';
+    msg.className = 'modal-msg error'; msg.style.display = 'block';
+    return;
+  }
+  if (p !== p2) {
+    msg.textContent = '两次密码输入不一致';
+    msg.className = 'modal-msg error'; msg.style.display = 'block';
+    return;
+  }
+  // Simulate register
+  msg.textContent = '注册成功！';
+  msg.className = 'modal-msg ok'; msg.style.display = 'block';
+  setTimeout(() => {
+    currentUser = u;
+    closeRegister();
+    renderUserArea();
+  }, 600);
+};
+
+// Close modals on overlay click
+document.getElementById('loginOverlay').addEventListener('click', function(e) { if (e.target === this) closeLogin(); });
+document.getElementById('registerOverlay').addEventListener('click', function(e) { if (e.target === this) closeRegister(); });
+
+// ---- Refresh Button ----
+document.getElementById('btnRefresh').onclick = function() {
+  const btn = document.getElementById('btnRefresh');
+  btn.textContent = '⏳ 刷新中...';
+  btn.disabled = true;
+  setTimeout(() => {
+    renderAll();
+    btn.textContent = '✅ 已刷新';
+    btn.style.color = '#27ae60';
+    btn.style.borderColor = '#27ae60';
+    setTimeout(() => {
+      btn.textContent = '🔄 刷新';
+      btn.style.color = 'var(--text-primary)';
+      btn.style.borderColor = 'var(--border-color)';
+      btn.disabled = false;
+    }, 1500);
+  }, 1000);
+};
+
+// Esc to close modals
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeLogin();
+    closeRegister();
+  }
+});
+
+console.log('每日热点聚合平台 — 界面复现已加载');
+console.log('包含：6 平台标签切换 · 排行榜/信息流双模式 · AI 趋势侧边栏 · 文章详情弹窗 · 明暗主题 · 登录/注册 · 刷新模拟');
+</script>
+
+</body>
+</html>

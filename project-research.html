@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Research — 企业调研报告生成器 · 界面复现</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  background: #f5f7fa;
+  color: #2c3e50;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+.app { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+/* ---- Header ---- */
+.header {
+  text-align: center; padding: 2rem 0 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white; border-radius: 16px; margin-bottom: 1.5rem;
+}
+.header h1 { font-size: 1.8rem; font-weight: 700; }
+.subtitle { font-size: 1rem; opacity: 0.9; margin-top: 0.25rem; }
+.powered { font-size: 0.75rem; opacity: 0.65; margin-top: 0.25rem; }
+.header .badge-demo {
+  display: inline-block; margin-top: 0.5rem; padding: 2px 10px;
+  background: rgba(255,255,255,0.2); border-radius: 10px;
+  font-size: 0.7rem; font-weight: 600; letter-spacing: 0.04em;
+}
+
+/* ---- Panels ---- */
+.panel {
+  background: white; border-radius: 12px;
+  padding: 1.5rem; margin-bottom: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.panel h2 { font-size: 1.1rem; margin-bottom: 1rem; color: #1a1a2e; }
+
+/* ---- Input ---- */
+.input-row { display: flex; gap: 0.75rem; }
+.input-row input {
+  flex: 1; padding: 0.85rem 1rem; font-size: 1rem;
+  border: 2px solid #e0e4ea; border-radius: 10px;
+  outline: none; transition: border-color 0.2s;
+}
+.input-row input:focus { border-color: #667eea; }
+
+.btn-primary {
+  padding: 0.85rem 1.5rem; font-size: 1rem; font-weight: 600;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white; border: none; border-radius: 10px;
+  cursor: pointer; white-space: nowrap;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.btn-primary:hover { opacity: 0.9; }
+.btn-primary:active { transform: scale(0.98); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem; font-size: 0.95rem;
+  background: #f0f0f5; color: #333; border: none;
+  border-radius: 8px; cursor: pointer; font-family: inherit;
+}
+.btn-secondary:hover { background: #e0e0ea; }
+
+.error-msg { color: #e74c3c; font-size: 0.85rem; margin-top: 0.5rem; }
+
+/* ---- Progress ---- */
+.progress-bar-container {
+  background: #e9ecef; border-radius: 10px; height: 14px;
+  overflow: hidden; margin-bottom: 0.75rem;
+}
+.progress-bar {
+  height: 100%; background: linear-gradient(90deg, #667eea, #764ba2);
+  border-radius: 10px; transition: width 0.5s ease;
+}
+.progress-text { font-size: 0.9rem; color: #666; margin-bottom: 0.5rem; }
+.step-list { list-style: none; font-size: 0.85rem; color: #555; }
+.step-list li { padding: 0.25rem 0; display: flex; align-items: center; gap: 8px; }
+.step-list li.done { color: #27ae60; }
+.step-list li.done::before { content: '✓'; font-weight: 700; }
+.step-list li.active { color: #667eea; font-weight: 600; }
+.step-list li.active::before { content: '…'; animation: pulse 0.8s infinite; }
+.step-list li.pending { color: #ccc; }
+.step-list li.pending::before { content: '○'; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* ---- Preflight ---- */
+.checks-list { display: flex; flex-direction: column; gap: 0.5rem; }
+.check-item {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.5rem 0.75rem; border-radius: 8px; background: #f8f9fa;
+}
+.check-item.block { border-left: 4px solid #e74c3c; }
+.check-item.warn { border-left: 4px solid #f39c12; }
+.check-item.pass { border-left: 4px solid #27ae60; }
+.check-item.info { border-left: 4px solid #3498db; }
+.check-item .icon { font-size: 1.1rem; }
+.check-item .icon.pass { color: #27ae60; }
+.check-item .icon.warn { color: #f39c12; font-weight: 700; }
+.check-item .icon.block { color: #e74c3c; font-weight: 700; }
+.check-item .icon.info { color: #3498db; }
+.check-item .body { flex: 1; }
+.check-item .name { font-weight: 600; font-size: 0.9rem; }
+.check-item .detail { font-size: 0.8rem; color: #888; display: block; }
+.fix-btn {
+  padding: 0.3rem 0.75rem; font-size: 0.75rem;
+  background: #fdecea; color: #e74c3c; border: 1px solid #f5c6cb;
+  border-radius: 6px; cursor: pointer; font-family: inherit;
+}
+.fix-btn:hover { background: #f8d7da; }
+
+/* ---- Setup Wizard ---- */
+.setup-desc { font-size: 0.9rem; color: #666; margin-bottom: 1rem; }
+.setup-form { display: flex; flex-direction: column; gap: 0.5rem; }
+.setup-form label { font-size: 0.85rem; font-weight: 600; color: #444; margin-top: 0.25rem; }
+.setup-form input,
+.setup-form select {
+  padding: 0.7rem 0.9rem; font-size: 0.95rem;
+  border: 2px solid #e0e4ea; border-radius: 8px;
+  outline: none; font-family: inherit;
+}
+.setup-form input:focus,
+.setup-form select:focus { border-color: #667eea; }
+.setup-msg { font-size: 0.85rem; margin-top: 0.25rem; padding: 0.5rem; border-radius: 6px; display: none; }
+.setup-msg.ok { background: #eafaf1; color: #27ae60; display: block; }
+.setup-msg.error { background: #fdecea; color: #e74c3c; display: block; }
+.setup-note { font-size: 0.75rem; color: #aaa; margin-top: 0.75rem; line-height: 1.5; }
+.setup-note code { background: #f0f0f5; padding: 0.1rem 0.35rem; border-radius: 3px; font-size: 0.75rem; }
+
+/* ---- Results ---- */
+.output-path {
+  font-size: 0.85rem; color: #666; margin-bottom: 1rem;
+  padding: 0.5rem 0.75rem; background: #f8f9fa; border-radius: 6px;
+  word-break: break-all;
+}
+.actions { display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: center; flex-wrap: wrap; }
+.download-grid { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 0.5rem; }
+.download-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.75rem 1rem; background: #f8f9fa; border-radius: 10px;
+  gap: 0.75rem; flex-wrap: wrap;
+}
+.download-label { font-size: 0.85rem; font-weight: 600; color: #333; flex: 1; min-width: 150px; word-break: break-all; }
+.download-actions { display: flex; gap: 0.5rem; flex-shrink: 0; }
+.download-btn {
+  display: inline-block; padding: 0.5rem 1.2rem;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 8px; text-decoration: none;
+  color: white; font-weight: 600; font-size: 0.85rem;
+  transition: opacity 0.2s; white-space: nowrap;
+}
+.download-btn:hover { opacity: 0.9; }
+.save-btn {
+  display: inline-block; padding: 0.5rem 1.2rem;
+  background: #f0f0f5; border: 1.5px solid #d0d0da;
+  border-radius: 8px; color: #444; font-weight: 600;
+  font-size: 0.85rem; cursor: pointer; white-space: nowrap;
+  transition: background 0.2s; font-family: inherit;
+}
+.save-btn:hover { background: #e0e0ea; }
+.save-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.download-note { font-size: 0.8rem; color: #888; margin-bottom: 0.5rem; }
+.results-actions { display: flex; gap: 0.75rem; margin-top: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* ---- Info Banner ---- */
+.info-banner {
+  background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 10px;
+  padding: 0.75rem 1rem; margin-bottom: 1rem;
+  font-size: 0.8rem; color: #1e40af;
+  display: flex; align-items: center; gap: 8px;
+}
+.info-banner .info-icon { font-size: 1rem; flex-shrink: 0; }
+
+/* ---- Footer ---- */
+.footer {
+  text-align: center; padding: 1.5rem 0; font-size: 0.8rem; color: #aaa;
+}
+.footer a { color: #667eea; }
+
+/* ---- Responsive ---- */
+@media (max-width: 480px) {
+  .input-row { flex-direction: column; }
+  .header h1 { font-size: 1.4rem; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <header class="header">
+    <h1>🏢 Company Research</h1>
+    <p class="subtitle">输入公司名称，一键生成企业调研报告</p>
+    <p class="powered">Powered by Claude Code</p>
+    <span class="badge-demo">界面复现 · 模拟演示</span>
+  </header>
+
+  <!-- Demo Info -->
+  <div class="info-banner">
+    <span class="info-icon">💡</span>
+    <span>这是一个<strong>界面复现演示</strong>。所有面板切换、进度动画和交互状态均可操作。真实版本需连接后端和 Claude Code CLI。</span>
+  </div>
+
+  <!-- Setup Wizard Panel -->
+  <section id="setup-panel" class="panel" style="display:none">
+    <h2>⚡ Quick Setup</h2>
+    <p class="setup-desc">首次使用？填写 API Key 即可自动配置环境</p>
+    <div class="setup-form">
+      <label for="setup-provider">API 提供商</label>
+      <select id="setup-provider">
+        <option value="deepseek">DeepSeek（推荐，国内可用）</option>
+        <option value="anthropic">Anthropic（官方）</option>
+        <option value="custom">自定义</option>
+      </select>
+      <label for="setup-apikey">API Key</label>
+      <input type="password" id="setup-apikey" placeholder="sk-..." autocomplete="off">
+      <div id="setup-advanced" style="display:none">
+        <label for="setup-baseurl">Base URL</label>
+        <input type="text" id="setup-baseurl" placeholder="https://api.deepseek.com/anthropic">
+        <label for="setup-model">Model</label>
+        <input type="text" id="setup-model" placeholder="deepseek-v4-pro">
+      </div>
+      <button id="btn-setup" class="btn-primary">Auto Configure</button>
+      <p id="setup-msg" class="setup-msg"></p>
+    </div>
+    <p class="setup-note">配置内容将写入 <code>~/.claude/settings.json</code>，包含 API Key 和工具权限。下次无需重复配置。</p>
+  </section>
+
+  <!-- Preflight Panel -->
+  <section id="preflight" class="panel">
+    <h2>🔍 Environment Check</h2>
+    <div id="preflight-checks" class="checks-list"></div>
+    <div id="preflight-actions" class="actions" style="display:none">
+      <button id="btn-setup-wizard" class="btn-secondary" style="display:none">Quick Setup</button>
+      <button id="btn-recheck" class="btn-secondary">重新检测</button>
+      <button id="btn-continue" class="btn-primary">继续使用</button>
+    </div>
+  </section>
+
+  <!-- Main Input Area -->
+  <section id="main-area" class="panel" style="display:none">
+    <h2>🔎 开始调研</h2>
+    <div class="input-row">
+      <input
+        type="text"
+        id="company-input"
+        placeholder="输入公司名称（例如：特斯拉、蔚来汽车、字节跳动）"
+        maxlength="200"
+        autocomplete="off"
+      >
+      <button id="btn-generate" class="btn-primary">生成报告</button>
+    </div>
+    <p id="input-error" class="error-msg" style="display:none"></p>
+  </section>
+
+  <!-- Progress Panel -->
+  <section id="progress-panel" class="panel" style="display:none">
+    <h2>⏳ 正在生成报告...</h2>
+    <div class="progress-bar-container">
+      <div id="progress-bar" class="progress-bar" style="width:0%"></div>
+    </div>
+    <p id="progress-text" class="progress-text">准备中...</p>
+    <ul id="progress-steps" class="step-list"></ul>
+  </section>
+
+  <!-- Results Panel -->
+  <section id="results-panel" class="panel" style="display:none">
+    <h2>✅ 报告已生成</h2>
+    <p id="output-path" class="output-path"></p>
+    <div id="download-buttons" class="download-grid"></div>
+    <p class="download-note">Word 文档 (.docx)，可直接编辑打印</p>
+    <div class="results-actions">
+      <button id="btn-open-folder" class="btn-secondary" style="display:none">📂 打开文件夹</button>
+      <button id="btn-restart" class="btn-secondary">🔁 继续调研下一家</button>
+    </div>
+    <div id="errors-display" class="error-msg" style="display:none"></div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <a href="https://github.com/MaJun0517/company-research" target="_blank">GitHub ↗</a> &middot;
+    Requires <a href="https://docs.anthropic.com/claude-code" target="_blank">Claude Code CLI</a>
+  </footer>
+
+</div>
+
+<script>
+// ---- Mock Preflight Data ----
+const MOCK_PREFLIGHT = [
+  { name: 'Claude CLI 已安装', detail: 'claude 命令可用 (v2.0.45) — 通过 npm install -g @anthropic-ai/claude-code 安装', level: 'pass' },
+  { name: '非交互模式可用', detail: 'claude -p 测试通过 — 用于无人值守的自动化报告生成', level: 'pass' },
+  { name: 'Python 版本', detail: 'Python 3.13.2 — 要求 ≥ 3.10，当前满足', level: 'pass' },
+  { name: '依赖完整性', detail: 'python-docx, fastapi, uvicorn, pytest 已安装 — requirements.txt 全部就绪', level: 'info' },
+  { name: '端口可用性', detail: '端口 8080 空闲 — 如被占用将自动递增重试', level: 'pass' },
+  { name: '网络连通性', detail: 'api.deepseek.com 可达 (56ms) — DeepSeek 推荐国内使用，无需代理', level: 'pass' },
+  { name: '中文路径支持', detail: '项目路径可写入 — 支持中文文件名和路径的 .docx 输出', level: 'pass' },
+  { name: '磁盘空间', detail: '可用空间 45.2 GB — 单次报告约 200KB，空间充足', level: 'info' },
+];
+
+// ---- Provider Presets ----
+const PROVIDERS = {
+  deepseek: { baseUrl: 'https://api.deepseek.com/anthropic', model: 'deepseek-v4-pro' },
+  anthropic: { baseUrl: '', model: 'claude-sonnet-4-6' },
+  custom: { baseUrl: '', model: '' },
+};
+
+// ---- State ----
+let hasBlocker = false;
+let isGenerating = false;
+
+// ---- DOM Refs ----
+const $ = id => document.getElementById(id);
+
+// ---- Setup Wizard ----
+const setupProvider = $('setup-provider');
+const setupAdvanced = $('setup-advanced');
+const setupBaseUrl = $('setup-baseurl');
+const setupModel = $('setup-model');
+
+setupProvider.onchange = function() {
+  const p = PROVIDERS[setupProvider.value];
+  setupBaseUrl.value = p.baseUrl;
+  setupModel.value = p.model;
+  setupAdvanced.style.display = setupProvider.value === 'custom' ? 'block' : 'none';
+};
+setupProvider.onchange();
+
+$('btn-setup').onclick = function() {
+  const apiKey = $('setup-apikey').value.trim();
+  if (!apiKey) {
+    showSetupMsg('请输入 API Key', 'error');
+    return;
+  }
+
+  const btn = $('btn-setup');
+  btn.disabled = true;
+  btn.textContent = '配置中...';
+  showSetupMsg('', '');
+
+  // Simulate async setup
+  setTimeout(() => {
+    showSetupMsg('配置保存成功！API Key 已写入 settings.json', 'ok');
+    btn.disabled = false;
+    btn.textContent = 'Auto Configure';
+
+    setTimeout(() => {
+      $('setup-panel').style.display = 'none';
+      runPreflight();
+    }, 800);
+  }, 1200);
+};
+
+function showSetupMsg(msg, cls) {
+  const el = $('setup-msg');
+  el.textContent = msg;
+  el.className = 'setup-msg ' + cls;
+  el.style.display = msg ? 'block' : 'none';
+}
+
+$('btn-setup-wizard').onclick = function() {
+  $('preflight').style.display = 'none';
+  $('setup-panel').style.display = 'block';
+};
+
+// ---- Preflight ----
+function runPreflight() {
+  const checksEl = $('preflight-checks');
+  checksEl.innerHTML = '<p style="color:#888;">检测中...</p>';
+  $('preflight-actions').style.display = 'none';
+  $('preflight').style.display = 'block';
+  hasBlocker = false;
+
+  // Simulate check delay
+  setTimeout(() => {
+    renderPreflight(MOCK_PREFLIGHT);
+  }, 600);
+}
+
+function renderPreflight(results) {
+  const checksEl = $('preflight-checks');
+  checksEl.innerHTML = '';
+
+  results.forEach(r => {
+    const div = document.createElement('div');
+    div.className = 'check-item ' + r.level;
+
+    const icons = { pass: '✓', info: 'ℹ', warn: '⚠', block: '✕' };
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'icon ' + r.level;
+    iconSpan.textContent = icons[r.level] || '?';
+
+    const bodyDiv = document.createElement('div');
+    bodyDiv.className = 'body';
+    bodyDiv.innerHTML = '<span class="name">' + r.name + '</span> <span class="detail">' + r.detail + '</span>';
+
+    div.appendChild(iconSpan);
+    div.appendChild(bodyDiv);
+
+    if (r.fix && r.level === 'block') {
+      hasBlocker = true;
+      const fixBtn = document.createElement('button');
+      fixBtn.className = 'fix-btn';
+      fixBtn.textContent = '如何修复';
+      fixBtn.onclick = function() { alert('修复方法：\n' + r.fix); };
+      div.appendChild(fixBtn);
+    }
+
+    checksEl.appendChild(div);
+  });
+
+  $('preflight-actions').style.display = 'flex';
+  $('btn-setup-wizard').style.display = hasBlocker ? 'inline-block' : 'none';
+
+  if (!hasBlocker) {
+    setTimeout(() => showMainArea(), 500);
+  }
+}
+
+$('btn-recheck').onclick = runPreflight;
+
+$('btn-continue').onclick = function() {
+  if (hasBlocker) {
+    if (!confirm('检测到阻塞问题。确定继续吗？')) return;
+  }
+  showMainArea();
+};
+
+function showMainArea() {
+  $('preflight').style.display = 'none';
+  $('setup-panel').style.display = 'none';
+  $('main-area').style.display = 'block';
+}
+
+// ---- Generate (Simulated) ----
+$('btn-generate').onclick = startGeneration;
+$('company-input').onkeydown = function(e) { if (e.key === 'Enter') startGeneration(); };
+
+const STEPS = [
+  '正在搜索公司基本信息...',
+  '正在收集行业数据...',
+  '公司概况报告生成中...',
+  '行业分析报告生成中...',
+  '正在转换为 Word 文档...',
+  '整理完成，准备下载...',
+];
+
+async function startGeneration() {
+  const company = $('company-input').value.trim();
+
+  if (!company) {
+    showError('请输入公司名称');
+    return;
+  }
+
+  if (isGenerating) return;
+  isGenerating = true;
+
+  $('btn-generate').disabled = true;
+  $('input-error').style.display = 'none';
+  $('progress-panel').style.display = 'block';
+  $('results-panel').style.display = 'none';
+  $('main-area').style.display = 'none';
+
+  const progressBar = $('progress-bar');
+  const progressText = $('progress-text');
+  const progressSteps = $('progress-steps');
+  progressBar.style.width = '0%';
+  progressSteps.innerHTML = '';
+
+  // Show all steps as pending
+  STEPS.forEach(s => {
+    const li = document.createElement('li');
+    li.className = 'pending';
+    li.textContent = s;
+    progressSteps.appendChild(li);
+  });
+
+  const stepEls = progressSteps.querySelectorAll('li');
+
+  // Animate through steps
+  for (let i = 0; i < STEPS.length; i++) {
+    // Mark previous as done
+    if (i > 0) {
+      stepEls[i - 1].className = 'done';
+    }
+    // Mark current as active
+    stepEls[i].className = 'active';
+    progressText.textContent = STEPS[i];
+    progressBar.style.width = ((i + 1) / STEPS.length * 100) + '%';
+
+    // Wait
+    await sleep(800 + Math.random() * 600);
+  }
+
+  // Mark all done
+  stepEls.forEach(el => el.className = 'done');
+  progressBar.style.width = '100%';
+  progressText.textContent = '✅ 全部完成！';
+
+  await sleep(400);
+
+  // Show results
+  showResults(company);
+  isGenerating = false;
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function showResults(company) {
+  $('progress-panel').style.display = 'none';
+  $('results-panel').style.display = 'block';
+
+  const outputPath = $('output-path');
+  outputPath.style.display = 'block';
+  outputPath.textContent = '报告已生成到 output/' + company + '/ 目录';
+
+  $('btn-open-folder').style.display = 'inline-block';
+  $('btn-open-folder').onclick = function() {
+    alert('模拟：打开文件夹 output/' + company);
+  };
+
+  const downloadGrid = $('download-buttons');
+  downloadGrid.innerHTML = '';
+
+  const files = [
+    { label: '公司概况报告', filename: company + '_公司概况.docx', index: 0 },
+    { label: '行业调研报告', filename: company + '_行业调研.docx', index: 1 },
+  ];
+
+  files.forEach(f => {
+    const div = document.createElement('div');
+    div.className = 'download-item';
+
+    const label = document.createElement('span');
+    label.className = 'download-label';
+    label.textContent = f.label + ' (' + f.filename + ')';
+
+    const actions = document.createElement('div');
+    actions.className = 'download-actions';
+
+    const downloadBtn = document.createElement('a');
+    downloadBtn.className = 'download-btn';
+    downloadBtn.href = '#';
+    downloadBtn.textContent = '下载';
+    downloadBtn.onclick = function(e) {
+      e.preventDefault();
+      alert('模拟下载：' + f.filename + '\n\n真实版本将从服务器流式下载 Word 文件。');
+    };
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'save-btn';
+    saveBtn.textContent = '保存到 output';
+    saveBtn.onclick = function() {
+      saveBtn.disabled = true;
+      saveBtn.textContent = '保存中...';
+      setTimeout(() => {
+        saveBtn.textContent = '已保存';
+        saveBtn.style.background = '#27ae60';
+        saveBtn.style.color = '#fff';
+      }, 800);
+    };
+
+    actions.appendChild(downloadBtn);
+    actions.appendChild(saveBtn);
+    div.appendChild(label);
+    div.appendChild(actions);
+    downloadGrid.appendChild(div);
+  });
+
+  $('btn-generate').disabled = false;
+}
+
+function showError(msg) {
+  $('input-error').textContent = msg;
+  $('input-error').style.display = 'block';
+  $('btn-generate').disabled = false;
+  $('progress-panel').style.display = 'none';
+  $('main-area').style.display = 'block';
+  isGenerating = false;
+}
+
+// ---- Restart ----
+$('btn-restart').onclick = function() {
+  $('results-panel').style.display = 'none';
+  $('main-area').style.display = 'block';
+  $('company-input').value = '';
+  $('input-error').style.display = 'none';
+  $('progress-panel').style.display = 'none';
+  $('progress-bar').style.width = '0%';
+  $('progress-steps').innerHTML = '';
+};
+
+// ---- Init ----
+runPreflight();
+
+console.log('Company Research — 企业调研报告生成器 · 界面复现已加载');
+console.log('包含：Setup Wizard · Preflight 8项检测 · 输入面板 · 进度模拟 · 结果下载面板');
+console.log('模拟了完整的用户操作流程：检测 → 配置 → 输入 → 生成 → 下载');
+</script>
+
+</body>
+</html>
